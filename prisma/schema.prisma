@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SP_orders {
+  id          Int          @id @default(autoincrement())
+  product     Int?         @unique(map: "product_id")
+  value       Int
+  email       String       @db.Text
+  name        String       @db.Text
+  address     String       @db.Text
+  SP_products SP_products? @relation(fields: [product], references: [id], map: "SP_orders_ibfk_1")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model SP_products {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(64)
+  description String     @db.Text
+  price       Int
+  photo       Bytes      @db.MediumBlob
+  flag        Boolean
+  SP_orders   SP_orders?
+}
+
+model SP_users {
+  id       Int    @id @default(autoincrement())
+  username String @db.VarChar(32)
+  password String @db.VarChar(512)
+}

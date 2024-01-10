@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        async function sendReq(url, method, headers = null, data = null) {
+            const options = { method: method, headers: { "Content-type": "application/json", ...headers } }
+            if (method != "GET" && data != null) options.body = JSON.stringify(data);
+            const res = await fetch(url, options)
+            const text = await res.text()
+            return text;
+        }
+        const token = sessionStorage.getItem(token);
+        const result = await sendReq('http://localhost:3000/administration', "POST", { "authorization": token }, null);
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

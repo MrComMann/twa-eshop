@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "outDir": "build/",
+    "esModuleInterop": true
+  },
+  "include": ["src/"]
+}
