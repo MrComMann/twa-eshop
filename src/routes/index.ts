@@ -30,7 +30,7 @@ export class MainRoute extends Route {
             res.render("login/index");
         })
 
-        this.adminRouter.post("/administration/home", (req, res) => {
+        this.adminRouter.post("/administration", (req, res) => {
             res.render("admin/index");
         })
 
@@ -53,7 +53,7 @@ export class MainRoute extends Route {
                                 httpOnly: true
                             })
 
-                            res.redirect(200, "/administration")
+                            res.redirect("/administration")
                         }
                         else {
                             res.status(401);
