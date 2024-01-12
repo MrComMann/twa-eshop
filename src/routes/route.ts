@@ -1,6 +1,7 @@
 import { Express, json, Router } from "express";
 import jwt from 'jsonwebtoken'
 require('dotenv').config
+import cookieParser from 'cookie-parser';
 
 export default abstract class Route {
   abstract setPrefix(): string;
@@ -8,6 +9,7 @@ export default abstract class Route {
   viewRouter = Router();
   apiRouter = Router();
   cssRouter = Router();
+  imageRouter = Router();
   adminRouter = Router();
   constructor() {
     this.apiRouter.use(json(), (req, res, next) => {
@@ -22,13 +24,18 @@ export default abstract class Route {
       res.setHeader("Content-type", "text/css");
       next();
     });
-    this.adminRouter.use((req, res, next) => {
+    this.imageRouter.use((req, res, next) => {
+      res.setHeader("Content-Type", "image/png");
+      next();
+    });
+    this.adminRouter.use(cookieParser(), (req, res, next) => {
       if (req.cookies && req.cookies.token) {
-        const token = JSON.parse(req.cookies.token as unknown as string);
-        jwt.verify(token.token, process.env.SECRET, (error, data: any) => {
+        const token = req.cookies.token as unknown as string;
+        jwt.verify(token, process.env.SECRET, (error, data: any) => {
           if (error) {
             res.status(401);
-            res.render('/administration/login');
+            console.log('401 redirection to /administration/login')
+            res.redirect('/administration/login');
           } else {
             res.locals.data = data;
             next();
@@ -37,7 +44,8 @@ export default abstract class Route {
       } else {
         console.log(req.cookies)
         res.status(401);
-        res.render('/administration/login');
+        console.log('401 redirection to /administration/login')
+        res.redirect('/administration/login');
       }
     });
   }
@@ -48,6 +56,7 @@ export default abstract class Route {
     app.use(this.setPrefix(), this.viewRouter);
     app.use(this.setPrefix(), this.apiRouter);
     app.use(this.setPrefix(), this.cssRouter);
+    app.use(this.setPrefix(), this.imageRouter);
     app.use(this.setPrefix(), this.adminRouter);
   }
 

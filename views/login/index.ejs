@@ -18,17 +18,7 @@
             const username = document.getElementById("username").value
             const password = document.getElementById("password").value
             const result = await sendReq('http://localhost:3000/auth/login', "POST", null, { username, password });
-
-            /*
-            if (result.status == 401 || result == null) {
-                console.log('Bad password')
-            } else {
-                const token = JSON.parse(await result.text());
-                let stringedToken = JSON.stringify(token)
-                sessionStorage.setItem("token", stringedToken);
-                await sendReq('http://localhost:3000/administration/home', "POST", { "Authorization": stringedToken }, null);
-            }
-*/
+            window.location.assign('/administration')
         }
     </script>
 </head>

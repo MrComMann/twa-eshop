@@ -1,5 +1,7 @@
 # TWA projekt - 1. pololetí
 
+## Vypracoval Ondřej Plicka
+
 ## DEV příkazy
 ```bash
 

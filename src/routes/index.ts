@@ -1,8 +1,8 @@
 import Route from "./route";
-import { authenticationMiddleware } from "../middleware";
 import path from "path";
 import jwt from "jsonwebtoken";
 import PrismaClient from '@prisma/client'
+import cookieParser from 'cookie-parser';
 require('dotenv').config
 
 const prisma = new PrismaClient.PrismaClient()
@@ -15,27 +15,67 @@ export class MainRoute extends Route {
     protected initializeRoutes(): void {
         // css
         this.cssRouter.get("/resources/css", (req, res) => {
+            console.log('200 /resources/css')
             res.sendFile(path.resolve(__dirname + '/../output.css'));
         });
-
-        this.viewRouter.get("/", (req, res) => {
-            res.render("layout/index");
+        this.cssRouter.get("/resources/maincss", (req, res) => {
+            console.log('200 /resources/maincss')
+            res.sendFile(path.resolve(__dirname + '/../main.css'));
         });
 
-        this.adminRouter.get("/administration", (req, res) => {
-            res.render("admin/index");
+        this.imageRouter.get("/images/main", (req, res) => {
+            const imagePath = path.join(__dirname, '../public/main-background.png');
+            console.log('200 /images/main')
+            res.sendFile(imagePath);
         })
 
+        this.apiRouter.get("/api/products", async (req, res) => {
+            try {
+                const products = await prisma.sP_products.findMany({
+                    where: {
+                        flag: true
+                    }
+                });
+
+                let data = []
+                products.forEach(obj => {
+                    data.push({ name: obj['name'], description: obj['description'], price: obj['price'], photo: obj['photo'] })
+                });
+                res.send(data);
+            } catch (e) {
+                console.error(e);
+                res.status(500).send('An error occurred');
+            } finally {
+                await prisma.$disconnect()
+            }
+
+            console.log('200 /api/products')
+        })
+
+        this.viewRouter.get("/", (req, res) => {
+            console.log('200 /')
+            res.render("main/index");
+        });
+
         this.viewRouter.get("/administration/login", (req, res) => {
+            console.log('200 /administration/login')
             res.render("login/index");
         })
 
-        this.adminRouter.post("/administration", (req, res) => {
+        this.adminRouter.get("/administration", (req, res) => {
+            console.log('200 /administration')
+            res.setHeader("Content-type", "text/html");
             res.render("admin/index");
+        })
+
+        this.adminRouter.get("/administration/logout", cookieParser(), (req, res) => {
+            res.clearCookie('token');
+            res.end()
         })
 
         this.apiRouter.post("/auth/login", (req, res) => {
             async function main() {
+                console.log('Trying to log in...')
                 const userDb = await prisma.sP_users.findMany()
                 const { username, password } = req.body
                 for (const user of userDb) {
@@ -53,7 +93,9 @@ export class MainRoute extends Route {
                                 httpOnly: true
                             })
 
-                            res.redirect("/administration")
+                            console.log('Success!')
+                            res.status(200)
+                            res.send(JSON.stringify("Successfully logged in."))
                         }
                         else {
                             res.status(401);

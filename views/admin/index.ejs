@@ -13,11 +13,9 @@
             const text = await res.text()
             return text;
         }
-        const token = sessionStorage.getItem(token);
-
         async function kys() {
-            sessionStorage.removeItem();
-            const result = await sendReq('http://localhost:3000/administration', "POST", null, null);
+            const result = await sendReq('http://localhost:3000/administration/logout', "GET", null, null);
+            window.location.assign('/')
         }
     </script>
 </head>
