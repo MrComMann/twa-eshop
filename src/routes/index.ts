@@ -15,31 +15,40 @@ export class MainRoute extends Route {
     protected initializeRoutes(): void {
         // css
         this.cssRouter.get("/resources/css", (req, res) => {
-            console.log('200 /resources/css')
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.sendFile(path.resolve(__dirname + '/../output.css'));
         });
         this.cssRouter.get("/resources/maincss", (req, res) => {
-            console.log('200 /resources/maincss')
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.sendFile(path.resolve(__dirname + '/../main.css'));
         });
 
         this.imageRouter.get("/images/main", (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             const imagePath = path.join(__dirname, '../public/main-background.png');
-            console.log('200 /images/main')
             res.sendFile(imagePath);
         })
 
+        this.viewRouter.get("/buy/:product", (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.render("main/index");
+        });
+
         this.apiRouter.get("/api/products", async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             try {
                 const products = await prisma.sP_products.findMany({
-                    where: {
-                        flag: true
-                    }
+                    where: { flag: true }
                 });
 
                 let data = []
                 products.forEach(obj => {
-                    data.push({ name: obj['name'], description: obj['description'], price: obj['price'], photo: obj['photo'] })
+                    data.push({ name: obj['name'], description: obj['description'], price: obj['price'], photo: obj['photo'].toString('base64') })
                 });
                 res.send(data);
             } catch (e) {
@@ -48,34 +57,44 @@ export class MainRoute extends Route {
             } finally {
                 await prisma.$disconnect()
             }
-
-            console.log('200 /api/products')
         })
 
         this.viewRouter.get("/", (req, res) => {
-            console.log('200 /')
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.render("main/index");
         });
 
-        this.viewRouter.get("/administration/login", (req, res) => {
-            console.log('200 /administration/login')
+        this.viewRouter.get("/administration", (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.render("login/index");
         })
 
-        this.adminRouter.get("/administration", (req, res) => {
-            console.log('200 /administration')
+        this.adminRouter.get("/administration/home", (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.setHeader("Content-type", "text/html");
             res.render("admin/index");
         })
 
-        this.adminRouter.get("/administration/logout", cookieParser(), (req, res) => {
+        this.adminRouter.post("/administration/logout", cookieParser(), (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             res.clearCookie('token');
             res.end()
         })
 
+        this.adminRouter.post("/administration/adduser", cookieParser(), (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.setHeader("Content-type", "application/json");
+        })
+
         this.apiRouter.post("/auth/login", (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
             async function main() {
-                console.log('Trying to log in...')
                 const userDb = await prisma.sP_users.findMany()
                 const { username, password } = req.body
                 for (const user of userDb) {
@@ -93,7 +112,6 @@ export class MainRoute extends Route {
                                 httpOnly: true
                             })
 
-                            console.log('Success!')
                             res.status(200)
                             res.send(JSON.stringify("Successfully logged in."))
                         }
@@ -119,15 +137,14 @@ export class MainRoute extends Route {
     }
 }
 /*
-login
 add user
+
 create product
 delete product
 flag product
 unflag product
-logout
 show products
-show flagged products
+
 place order
 show orders
 */

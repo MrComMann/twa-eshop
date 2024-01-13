@@ -14,36 +14,49 @@
             const res = await fetch(url, options)
             const text = await res.text()
             return text;
-
         }
-        let products;
+
         document.addEventListener('DOMContentLoaded', async () => {
-            products = await sendReq('/api/products', 'GET');
-            console.log(products);
+            const result = await sendReq('http://localhost:3000/api/products', "GET");
+            const products = JSON.parse(result)
+
+            document.getElementById('p1_image').src = "data:image/png;base64," + products[0].photo
+            document.getElementById('p1_name').innerText = products[0].name
+            document.getElementById('p1_price').innerText = products[0].price
+            document.getElementById('p1_desc').innerText = products[0].description
+
+            document.getElementById('p2_image').src = "data:image/png;base64," + products[1].photo
+            document.getElementById('p2_name').innerText = products[1].name
+            document.getElementById('p2_price').innerText = products[1].price
+            document.getElementById('p2_desc').innerText = products[1].description
+
+            document.getElementById('p3_image').src = "data:image/png;base64," + products[2].photo
+            document.getElementById('p3_name').innerText = products[2].name
+            document.getElementById('p3_price').innerText = products[2].price
+            document.getElementById('p3_desc').innerText = products[2].description
         })
-        const product1 = products[0];
-        const product2 = products[1];
-        const product3 = products[2];
     </script>
 </head>
 
 <body class="m-0 p-0 bg-dark">
 
-    <header class="h-screen w-full flex justify-center items-center flex-col relative bg-black"
+    <header class="height-custom w-full flex justify-center items-center flex-col relative bg-black"
         style="background-image: linear-gradient(rgba(255, 255, 255, 0), #151515), url('/images/main'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-        <h1 class="text-8xl font-bold text-light z-10" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
+        <h1 class="text-8xl font-bold text-light z-10 overflow-hidden"
+            style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
             HEADUCT
         </h1>
-        <p class="text-3xl font-bold text-light z-10 mt-4" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
+        <p class="text-3xl font-bold text-light z-10 mt-4 overflow-hidden"
+            style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
             The future of headwear awaits.
         </p>
     </header>
 
 
     <main class="w-screen flex justify-center items-center">
-        <section id="glass" class="max-w-screen-xl my-4 w-11/12 p-8">
-            <div id="about">
-                <h2 class="text-3xl pb-4">About our company</h2>
+        <section id="glass" class="max-w-screen-xl mb-12 w-11/12 p-8">
+            <div id="about" class="px-16">
+                <h2 class="text-3xl pb-4 mt-16">About our company</h2>
                 <p class="pb-2">At HEADUCT, we're not just a company. We're innovators at the forefront of headwear
                     fashion and technology. Founded by a team of passionate designers and tech enthusiasts, we embarked
                     on a mission to revolutionize the way people think about headgear.</p>
@@ -52,7 +65,7 @@
                     path of creativity and innovation, crafting a line of products that are not only stylish but also
                     infused with cutting-edge technology.
                 </p>
-                <div class="flex justify-around my-12">
+                <div class="flex justify-between my-12">
                     <div class="max-w-72 p-4" id="glass">
                         <h3 class="text-xl pb-2 text-primary">
                             Innovation at the Core
@@ -80,11 +93,54 @@
                 </div>
                 <p class="text-xl text-right">HEADUCT – Wear the Future</p>
             </div>
+            <div id="product1" class="mt-64 flex w-full px-16">
+                <img class="max-w-sm pr-8" id="p1_image" src="" alt="Product Image">
+                <div class="w-72 pl-8 flex flex-col">
+                    <h4 id="p1_name" class="text-2xl text-primary"></h4>
+                    <p class="py-4"><span id="p1_price"></span> €</p>
+                    <p id="p1_desc"></p>
+                    <div class="mt-auto py-2"><a href="/buy/1" id="button" class="p-2">Buy this product</a></div>
+                </div>
+            </div>
+
+            <div id="product2" class="mt-64 flex w-full justify-end px-16">
+                <div class="w-72 p-8 flex flex-col">
+                    <h4 id="p2_name" class="text-2xl text-primary text-right"></h4>
+                    <p class="py-4 text-right"><span id="p2_price"></span> €</p>
+                    <p id="p2_desc" class="text-right mb-auto"></p>
+                    <div class="mt-auto py-2 text-right"><a href="/buy/2" id="button" class="p-2">Buy this product</a>
+                    </div>
+                </div>
+                <img class="max-w-sm p-8" id="p2_image" src="" alt="Product Image">
+            </div>
+
+            <div id="product3" class="mt-64 flex w-full px-16 mb-16">
+                <img class="max-w-sm pr-8" id="p3_image" src="" alt="Product Image">
+                <div class="w-72 pl-8 flex flex-col">
+                    <h4 id="p3_name" class="text-2xl text-primary"></h4>
+                    <p class="py-4"><span id="p3_price"></span> €</p>
+                    <p id="p3_desc"></p>
+                    <div class="mt-auto py-2"><a href="/buy/3" id="button" class="p-2">Buy this product</a></div>
+                </div>
+            </div>
         </section>
     </main>
 
-    <footer>
+    <footer class="bg-gradient-to-b from-dark to-black w-screen flex justify-center pt-32 pb-8">
+        <div class="max-w-screen-xl flex justify-between w-11/12 align-middle h-full">
+            <div class="pr-32">
+                <p>Contact us on:</p>
+                <p>Tel.: <a href="tel.:+420123456789" class="text-primary underline">+420 123 456 789</a></p>
+                <p>Email: <a href="mailto:ourmail@headuct.com" class="text-primary underline">ourmail@headuct.com</a>
+                </p>
 
+            </div>
+            <div>
+                <p class="text-primary text-right">Discover the Future of Headwear with HEADUCT</p>
+                <p class="mb-8 text-right">Innovative Designs | Patented Technology | Sustainable Materials</p>
+                <p class="text-right">© 2024 HEADUCT. All Rights Reserved.</p>
+            </div>
+        </div>
     </footer>
 </body>
 

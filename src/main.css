@@ -1,5 +1,7 @@
 * {
     color: #fff;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 #glass {
@@ -9,4 +11,18 @@ box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(3.7px);
 -webkit-backdrop-filter: blur(3.7px);
 border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+#button {
+    background: rgba(255, 255, 255, 0.04);
+border-radius: 8px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(3.7px);
+-webkit-backdrop-filter: blur(3.7px);
+border: 1px solid rgba(255, 255, 255, 0.35);
+margin-top: auto;
+}
+
+.height-custom {
+    height: calc(100vh - 32px);
 }

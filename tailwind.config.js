@@ -3,6 +3,7 @@ module.exports = {
   content: ["./views/**/*.ejs"],
   theme: {
     colors: {
+      'black': '#000000',
       'dark': '#151515',
       'light': '#FFFFFF',
       'primary': '#F2AF29',

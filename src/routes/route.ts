@@ -34,18 +34,17 @@ export default abstract class Route {
         jwt.verify(token, process.env.SECRET, (error, data: any) => {
           if (error) {
             res.status(401);
-            console.log('401 redirection to /administration/login')
-            res.redirect('/administration/login');
+            res.redirect('/administration');
           } else {
             res.locals.data = data;
             next();
           }
         });
-      } else {
-        console.log(req.cookies)
-        res.status(401);
-        console.log('401 redirection to /administration/login')
-        res.redirect('/administration/login');
+      }
+      else {
+        res.status(404);
+        res.setHeader("Content-type", "text/html");
+        res.render('nopage/index');
       }
     });
   }

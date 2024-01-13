@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration</title>
+    <link rel="stylesheet" href="resources/css">
     <script>
         async function sendReq(url, method, headers = null, data = null) {
             const options = { method: method, headers: { "Content-type": "application/json", ...headers } }
@@ -18,15 +19,48 @@
             const username = document.getElementById("username").value
             const password = document.getElementById("password").value
             const result = await sendReq('http://localhost:3000/auth/login', "POST", null, { username, password });
-            window.location.assign('/administration')
+            window.location.assign('/administration/home')
         }
     </script>
 </head>
 
 <body>
-    <form onsubmit="loginHandle(event)">
-        <input type="text" id="username"><input type="password" id="password"><input type="submit">
-    </form>
+
+    <body class="bg-dark flex h-screen w-screen">
+        <form class="m-auto p-8" onsubmit="loginHandle(event)">
+            <h1 class="text-4xl text-primary text-center pb-8">ADMINISTRATION</h1>
+            <div class="mb-4">
+                <input type="text" id="username"
+                    class="w-full px-3 py-2 border border-primary rounded-md focus:outline-none focus:ring-2 focus:border-primary bg-dark text-light"
+                    placeholder="Username">
+            </div>
+            <div class="mb-4">
+                <input type="password" id="password"
+                    class="w-full px-3 py-2 border border-primary rounded-md focus:outline-none focus:ring-2 focus:border-primary bg-dark text-light"
+                    placeholder="Password">
+            </div>
+            <div>
+                <input type="submit"
+                    class="w-full text-light hover:bg-opacity-30 hover:bg-primary  focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-md px-3 py-2 cursor-pointer"
+                    value="Log In">
+            </div>
+            <p class="text-primary text-center pt-8">
+                <a href="/" class="text-primary hover:text-light underline">Find Your Way Back - Head to Our
+                    Homepage.</a>
+            </p>
+        </form>
+
+        <!--
+        <form class="m-auto pl-8" onsubmit="loginHandle(event)">
+            <h1 class="text-4xl text-primary text-center pb-8">ADMINISTRATION</h1>
+            <p class="text-light text-xl text-center"><input type="text" id="username"></p>
+            <p class="text-light text-xl text-center my-2"><input type="password" id="password"></p>
+            <p class="text-light text-xl text-center"><input type="submit"></p>
+            <p class="text-primary text-center pt-8 underline"><a href="/">Find Your Way Back - Head to Our
+                    Homepage.</a>
+            </p>
+        </form>-->
+    </body>
 </body>
 
 </html>
