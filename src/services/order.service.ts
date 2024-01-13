@@ -1,9 +1,13 @@
-class UserService {
+class OrderService {
 
-    addUser() {
+    create(name: string, email: string, address: string, product: number, value: number) {
+
+    }
+
+    show() {
 
     }
 
 }
 
-export const userService = new UserService();
+export const orderService = new OrderService();

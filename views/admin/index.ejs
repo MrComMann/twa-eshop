@@ -17,11 +17,21 @@
             const result = await sendReq('http://localhost:3000/administration/logout', "POST", null, null);
             window.location.assign('/')
         }
+
+        async function addUser() {
+            const username = document.getElementById("user").value
+            const result = await sendReq('http://localhost:3000/administration/adduser', "POST", null, { username });
+            document.getElementById("userRes").innerText = JSON.stringify(result)
+
+        }
     </script>
 </head>
 
 <body>
     <h1>ADMINISTRACEEEE</h1>
+    <p>new user: <input id="user" type="text"></p>
+    <button onclick="addUser()">create user</button>
+    <p id="userRes"></p>
     <button onclick="kys()">logout</button>
 </body>
 

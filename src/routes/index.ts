@@ -3,6 +3,7 @@ import path from "path";
 import jwt from "jsonwebtoken";
 import PrismaClient from '@prisma/client'
 import cookieParser from 'cookie-parser';
+import { adminService } from "../services";
 require('dotenv').config
 
 const prisma = new PrismaClient.PrismaClient()
@@ -85,10 +86,20 @@ export class MainRoute extends Route {
             res.end()
         })
 
-        this.adminRouter.post("/administration/adduser", cookieParser(), (req, res) => {
+        this.adminRouter.post("/administration/adduser", cookieParser(), async (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
             res.setHeader("Content-type", "application/json");
+            const { username } = req.body
+            const pass = await adminService.addUser(username)
+            if (pass !== "") {
+                res.status(200)
+                console.log(pass)
+                res.send(JSON.stringify({ message: "User successfully created.", pass: pass }))
+            } else {
+                res.status(401)
+                res.send(JSON.stringify({ message: "Something went wrong." }))
+            }
         })
 
         this.apiRouter.post("/auth/login", (req, res) => {
@@ -136,18 +147,6 @@ export class MainRoute extends Route {
         });
     }
 }
-/*
-add user
-
-create product
-delete product
-flag product
-unflag product
-show products
-
-place order
-show orders
-*/
 
 const routes: Route[] = [new MainRoute()];
 
