@@ -33,10 +33,22 @@ export class MainRoute extends Route {
             res.sendFile(imagePath);
         })
 
-        this.viewRouter.get("/buy/:product", (req, res) => {
+        this.viewRouter.get("/buy/:product", async (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
-            res.render("main/index");
+            try {
+                const id = parseInt(req.params.product)
+                const product = await prisma.sP_products.findUnique({
+                    where: { flag: true, id: id }
+                });
+
+                res.render("order/index", { name: product['name'], description: product['description'], price: product['price'], photo: product['photo'].toString('base64') });
+            } catch (e) {
+                console.error(e);
+                res.status(500).send('An error occurred');
+            } finally {
+                await prisma.$disconnect()
+            }
         });
 
         this.apiRouter.get("/api/products", async (req, res) => {
