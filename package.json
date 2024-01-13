@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node build/index.js",
     "test": "jest --rootDir=tests",
     "lint": "eslint '**/*.{js,jsx,ts,tsx,css,html}'",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,css,html}'",
