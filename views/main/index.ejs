@@ -95,20 +95,22 @@
             </div>
             <div id="product1" class="mt-64 flex w-full px-16">
                 <img class="max-w-sm pr-8" id="p1_image" src="" alt="Product Image">
-                <div class="w-72 pl-8 flex flex-col">
+                <div class="pl-8 flex flex-col">
                     <h4 id="p1_name" class="text-2xl text-primary"></h4>
                     <p class="py-4"><span id="p1_price"></span> €</p>
                     <p id="p1_desc"></p>
-                    <div class="mt-auto py-2"><a href="/buy/1" id="button" class="p-2">Buy this product</a></div>
+                    <div class="mt-auto py-2"><a href="/buy/<%= first %>" id="button" class="p-2">Buy this product</a>
+                    </div>
                 </div>
             </div>
 
             <div id="product2" class="mt-64 flex w-full justify-end px-16">
-                <div class="w-72 p-8 flex flex-col">
+                <div class="p-8 flex flex-col">
                     <h4 id="p2_name" class="text-2xl text-primary text-right"></h4>
                     <p class="py-4 text-right"><span id="p2_price"></span> €</p>
                     <p id="p2_desc" class="text-right mb-auto"></p>
-                    <div class="mt-auto py-2 text-right"><a href="/buy/2" id="button" class="p-2">Buy this product</a>
+                    <div class="mt-auto py-2 text-right"><a href="/buy/<%= second %>" id="button" class="p-2">Buy this
+                            product</a>
                     </div>
                 </div>
                 <img class="max-w-sm p-8" id="p2_image" src="" alt="Product Image">
@@ -116,11 +118,12 @@
 
             <div id="product3" class="mt-64 flex w-full px-16 mb-16">
                 <img class="max-w-sm pr-8" id="p3_image" src="" alt="Product Image">
-                <div class="w-72 pl-8 flex flex-col">
+                <div class="pl-8 flex flex-col">
                     <h4 id="p3_name" class="text-2xl text-primary"></h4>
                     <p class="py-4"><span id="p3_price"></span> €</p>
                     <p id="p3_desc"></p>
-                    <div class="mt-auto py-2"><a href="/buy/3" id="button" class="p-2">Buy this product</a></div>
+                    <div class="mt-auto py-2"><a href="/buy/<%= third %>" id="button" class="p-2">Buy this product</a>
+                    </div>
                 </div>
             </div>
         </section>

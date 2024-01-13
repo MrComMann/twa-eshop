@@ -3,7 +3,7 @@ import path from "path";
 import jwt from "jsonwebtoken";
 import PrismaClient from '@prisma/client'
 import cookieParser from 'cookie-parser';
-import { adminService } from "../services";
+import { adminService, orderService } from "../services";
 require('dotenv').config
 
 const prisma = new PrismaClient.PrismaClient()
@@ -33,6 +33,22 @@ export class MainRoute extends Route {
             res.sendFile(imagePath);
         })
 
+        this.apiRouter.post("/order", async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+
+            const { name, email, address, value, product } = req.body
+            console.log(product)
+            const newOrder = await orderService.create(name, email, address, parseInt(product), parseInt(value))
+            console.log(name, email, address, value, product)
+            if (newOrder.length > 0) {
+                res.send(JSON.stringify('Success!'));
+            }
+            else {
+                res.send(JSON.stringify('Wrong product.'));
+            }
+        })
+
         this.viewRouter.get("/buy/:product", async (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
@@ -42,7 +58,7 @@ export class MainRoute extends Route {
                     where: { flag: true, id: id }
                 });
 
-                res.render("order/index", { name: product['name'], description: product['description'], price: product['price'], photo: product['photo'].toString('base64') });
+                res.render("order/index", { product_id: id, name: product['name'], description: product['description'], price: product['price'], photo: product['photo'].toString('base64') });
             } catch (e) {
                 console.error(e);
                 res.status(500).send('An error occurred');
@@ -72,10 +88,23 @@ export class MainRoute extends Route {
             }
         })
 
-        this.viewRouter.get("/", (req, res) => {
+        this.viewRouter.get("/", async (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
-            res.render("main/index");
+            try {
+                const products = await prisma.sP_products.findMany({
+                    where: { flag: true }
+                });
+
+                let data = []
+                products.forEach(obj => {
+                    data.push(obj['id'])
+                });
+                res.render("main/index", { first: data[0], second: data[1], third: data[2] });
+            } finally {
+                await prisma.$disconnect()
+            }
+
         });
 
         this.viewRouter.get("/administration", (req, res) => {
@@ -84,11 +113,60 @@ export class MainRoute extends Route {
             res.render("login/index");
         })
 
-        this.adminRouter.get("/administration/home", (req, res) => {
+        this.adminRouter.get("/administration/home", cookieParser(), (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
             res.setHeader("Content-type", "text/html");
             res.render("admin/index");
+        })
+
+        this.adminRouter.post("/administration/showorders", cookieParser(), async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.setHeader("Content-type", "application/json");
+            try {
+                const orders = await prisma.sP_orders.findMany();
+                res.send(JSON.stringify(orders))
+            } finally {
+                await prisma.$disconnect()
+            }
+        })
+        this.adminRouter.post("/administration/showproducts", cookieParser(), async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.setHeader("Content-type", "application/json");
+            try {
+                const products = await prisma.sP_products.findMany();
+                res.send(JSON.stringify(products))
+            } finally {
+                await prisma.$disconnect()
+            }
+        })
+
+        this.adminRouter.post("/administration/editflags", cookieParser(), async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.setHeader("Content-type", "application/json");
+            const { flag1, flag2, flag3 } = req.body
+            try {
+                await prisma.sP_products.updateMany({
+                    data: {
+                        flag: false
+                    }
+                });
+                await prisma.sP_products.update({
+                    where: { id: flag1 }, data: { flag: true }
+                });
+                await prisma.sP_products.update({
+                    where: { id: flag2 }, data: { flag: true }
+                });
+                await prisma.sP_products.update({
+                    where: { id: flag3 }, data: { flag: true }
+                });
+                res.send(JSON.stringify("Updated"))
+            } finally {
+                await prisma.$disconnect()
+            }
         })
 
         this.adminRouter.post("/administration/logout", cookieParser(), (req, res) => {
@@ -96,6 +174,23 @@ export class MainRoute extends Route {
             console.log(res.statusCode + " " + req.path + " " + statMes)
             res.clearCookie('token');
             res.end()
+        })
+
+        this.adminRouter.post("/administration/deleteproduct", cookieParser(), async (req, res) => {
+            const statMes = res.statusMessage ?? "OK";
+            console.log(res.statusCode + " " + req.path + " " + statMes)
+            res.setHeader("Content-type", "application/json");
+            const { id } = req.body
+            try {
+                await prisma.sP_products.delete({
+                    where: {
+                        id: id
+                    }
+                });
+                res.send(JSON.stringify('Product deleted.'))
+            } finally {
+                await prisma.$disconnect()
+            }
         })
 
         this.adminRouter.post("/administration/adduser", cookieParser(), async (req, res) => {

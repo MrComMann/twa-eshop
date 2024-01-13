@@ -33,8 +33,9 @@ export default abstract class Route {
         const token = req.cookies.token as unknown as string;
         jwt.verify(token, process.env.SECRET, (error, data: any) => {
           if (error) {
-            res.status(401);
-            res.redirect('/administration');
+            res.status(404);
+            res.setHeader("Content-type", "text/html");
+            res.render('nopage/index');
           } else {
             res.locals.data = data;
             next();

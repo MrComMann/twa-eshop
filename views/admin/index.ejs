@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration</title>
+    <link rel="stylesheet" href="resources/css">
     <script>
         async function sendReq(url, method, headers = null, data = null) {
             const options = { method: method, headers: { "Content-type": "application/json", ...headers } }
@@ -22,8 +23,91 @@
             const username = document.getElementById("user").value
             const result = await sendReq('http://localhost:3000/administration/adduser', "POST", null, { username });
             document.getElementById("userRes").innerText = JSON.stringify(result)
+        }
+
+        async function showProducts() {
+            const products = await sendReq('http://localhost:3000/administration/showproducts', "POST")
+            const div = document.getElementById('products-show');
+            div.innerHTML = formatProducts(JSON.parse(products));
+        }
+
+        async function showOrders() {
+            const orders = await sendReq('http://localhost:3000/administration/showorders', "POST")
+            const div = document.getElementById('orders-show');
+            div.innerHTML = formatOrders(JSON.parse(orders));
+            console.log()
+        }
+
+        function formatOrders(orders) {
+            let html = '<table class="orders-table"><tr><th>Product ID</th><th>Value</th><th>Email</th><th>Name</th><th>Address</th></tr>';
+            orders.forEach(order => {
+                html += `<tr><td>${order.product}</td><td>${order.value}</td><td>${order.email}</td><td>${order.name}</td><td>${order.address}</td></tr>`;
+            });
+            html += '</table>';
+            return html;
+        }
+
+        function formatProducts(products) {
+            let table = document.createElement('table');
+            table.className = 'products-table';
+            table.innerHTML = '<tr><th>Name</th><th class="max-w-48">Description</th><th>Price</th><th>Delete</th></tr>';
+
+            products.forEach(product => {
+                let row = table.insertRow();
+                row.innerHTML = `<td>${product.name}</td><td class="max-w-48">${product.description}</td><td>${product.price}</td>`;
+
+                let deleteCell = row.insertCell();
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', async () => {
+                    console.log('lol')
+                    if (product.flag == 0) {
+                        if (confirm('Are you sure you want to delete this product?')) {
+                            let id = product.id
+                            await sendReq('http://localhost:3000/administration/deleteproduct', "POST", null, { id })
+                        }
+                    }
+                })
+                deleteCell.appendChild(deleteButton);
+            });
+
+            return table.outerHTML;
+        }
+
+        async function editFlags(e) {
+            e.preventDefault()
+            const flag1 = document.getElementById("flag1").value;
+            const flag2 = document.getElementById("flag2").value;
+            const flag3 = document.getElementById("flag3").value;
+            if (flag1 != flag2 && flag2 != flag3 && flag3 != flag1) {
+                await sendReq('http://localhost:3000/administration/editflags', "POST", null, { flag1, flag2, flag3 })
+                document.getElementById("userRes").innerText = "Flags updated"
+            } else {
+                document.getElementById("flagRes").innerText = "Products cannot be the same"
+            }
 
         }
+
+        async function populateSelects() {
+            const products = await sendReq('http://localhost:3000/administration/showproducts', 'POST');
+            const productsArray = JSON.parse(products);
+
+            ["flag1", "flag2", "flag3"].forEach(selectId => {
+                const select = document.getElementById(selectId);
+                productsArray.forEach(product => {
+                    const option = document.createElement("option");
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            showOrders()
+            showProducts()
+            populateSelects()
+        })
     </script>
 </head>
 
@@ -33,6 +117,23 @@
     <button onclick="addUser()">create user</button>
     <p id="userRes"></p>
     <button onclick="kys()">logout</button>
+    <form onsubmit="editFlags(event)">
+        <select name="" id="flag1">
+
+        </select>
+        <select name="" id="flag2">
+
+        </select>
+        <select name="" id="flag3">
+
+        </select>
+        <button type="submit">Update flags</button>
+        <p id="flagRes"></p>
+    </form>
+    <div class="flex">
+        <div id="products-show"></div>
+        <div id="orders-show"></div>
+    </div>
 </body>
 
 </html>
