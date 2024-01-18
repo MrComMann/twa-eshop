@@ -18,12 +18,15 @@ export class MainRoute extends Route {
         this.cssRouter.get("/resources/css", (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
-            res.sendFile(path.resolve(__dirname + '/../output.css'))
+            const filePath = path.join(__dirname, '../../public/output.css')
+            res.sendFile(filePath)
+            console.log(filePath)
         });
         this.cssRouter.get("/resources/maincss", (req, res) => {
             const statMes = res.statusMessage ?? "OK";
             console.log(res.statusCode + " " + req.path + " " + statMes)
-            res.sendFile(path.resolve(__dirname + '/../main.css'));
+            const filePath = path.join(__dirname, '../../public/main.css')
+            res.sendFile(filePath);
         });
 
         this.imageRouter.get("/images/main", (req, res) => {

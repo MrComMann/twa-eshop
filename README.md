@@ -2,7 +2,7 @@
 
 ## Vypracoval Ondřej Plicka
 
-# Nějakým záhadným způsobem v build verzi nefunguje CSS
+# Už funguje css na build verzi
 
 ## DEV příkazy
 ```bash
